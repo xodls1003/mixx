@@ -2,11 +2,10 @@ package com.mixtest.service.impl;
 
 import java.util.List;
 
-import javax.sound.midi.MidiDevice.Info;
-
 import org.springframework.stereotype.Service;
 
 import com.mixtest.domain.BoardVO;
+import com.mixtest.domain.Criteria;
 import com.mixtest.mapper.BoardMapper;
 import com.mixtest.service.BoardService;
 
@@ -18,6 +17,14 @@ import lombok.extern.log4j.Log4j;
 @AllArgsConstructor
 public class BoardServiceImpl implements BoardService{
 	
+	@Override
+	public List<BoardVO> getList(Criteria cri) {
+		// TODO Auto-generated method stub
+		log.info("get List with criteria: " + cri);;
+		
+		return mapper.getListWithPaging(cri);
+	}
+
 	private BoardMapper mapper;
 	
 	@Override
@@ -48,11 +55,8 @@ public class BoardServiceImpl implements BoardService{
 		return mapper.delete(bno) == 1;
 	}
 
-	@Override
-	public List<BoardVO> getList() {
-		// TODO Auto-generated method stub
-		log.info("getList......");
-		return mapper.getList();
-	}
-
+	/*
+	 * @Override public List<BoardVO> getList() { // TODO Auto-generated method stub
+	 * log.info("getList......"); return mapper.getList(); }
+	 */
 }

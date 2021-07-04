@@ -3,6 +3,7 @@ package com.mixtest.service;
 import java.util.List;
 
 import com.mixtest.domain.BoardVO;
+import com.mixtest.domain.Criteria;
 
 public interface BoardService {
 	public void register(BoardVO board);
@@ -13,5 +14,7 @@ public interface BoardService {
 	
 	public boolean remove(Long bno);
 	
-	public List<BoardVO> getList();
+	//public List<BoardVO> getList();
+	
+	public List<BoardVO> getList(Criteria cri);
 }
