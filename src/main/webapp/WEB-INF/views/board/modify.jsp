@@ -16,7 +16,12 @@
                             <div class="panel-heading">Board Modify</div>
                             <!-- /.panel-heading -->
                             <div class="panel-body">
-                                <form action="/board/modify" method="POST">
+                                <form role="form" action="/board/modify" method="POST">
+                                	<input type="hidden" name="pageNum" value='<c:out value="${cri.pageNum}"/>'/>
+                                    <input type="hidden" name="amount" value='<c:out value="${cri.amount}"/>'/>
+                                    <input type="hidden" name="startNum" value='<c:out value="${cri.startNum}"/>'/>
+                                    <input type="hidden" name="keyword" value='<c:out value="${cri.keyword}"/>'/>
+                                    <input type="hidden" name="type" value='<c:out value="${cri.type}"/>'/>
                                     <div class="form-group">
                                         <label>Bno</label>
                                         <input class="form-control" name='bno' value='<c:out value="${board.bno}"/>'
@@ -83,7 +88,18 @@
                             } else if (operation === 'list') {
                                 //move to list
                                 formObj.attr("action", "/board/list").attr("method", "get");
+                                var pageNumTag = $("input[name='pageNum']").clone();
+                                var amountTag = $("input[name='amount']").clone();
+                                var startNumTag = $("input[name='startNum']").clone();
+                                var keywordTag = $("input[name='keyword']").clone();
+                                var typeTag = $("input[name='type']").clone();
+
                                 formObj.empty();
+                                formObj.append(pageNumTag);
+                                formObj.append(amountTag);
+                                formObj.append(startNumTag);
+                                formObj.append(keywordTag);
+                                formObj.append(typeTag);
 
                             }
                             formObj.submit();

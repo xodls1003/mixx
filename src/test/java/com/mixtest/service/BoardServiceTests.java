@@ -37,11 +37,7 @@ public class BoardServiceTests {
 		service.register(board);
 		
 	}
-	@Test
-	public void testGetList() {
-		service.getList(new Criteria(2)).forEach(board -> log.info(board));
-	}
-	
+
 	@Test
 	public void testGet() {
 		log.info(service.get(1L));

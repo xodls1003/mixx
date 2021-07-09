@@ -10,10 +10,42 @@
 		]]>
 	</select>
 	
-	<select id="getListWithPaging" resultType="Board" >
+	<sql id="criteria">
+		<if test="type!=null">
+			<where>
+				<trim prefixOverrides="OR">
+					<foreach item='type' collection="typeArr">
+						<trim prefix="OR">
+							<choose>
+								<when test="type == 'T'.toString()">
+									title like
+									 concat('%',#{keyword},'%')
+								</when>
+								<when test="type == 'C'.toString()">
+									content like 
+									concat('%',#{keyword},'%')
+								</when>                                                               
+								<when test="type == 'W'.toString()">
+									writer like 
+									concat('%',#{keyword},'%')
+								</when>
+							</choose>
+						</trim>
+					</foreach>
+				</trim>
+			</where>
+		</if>
+	</sql>
+	
+	<select id="getListWithPaging" resultType="Board" parameterType="Criteria">
 		<![CDATA[
-			select * from tbl_board order by bno desc limit #{startNum},#{amount}
-		]]>
+			select * 
+			from tbl_board 
+			]]>
+			<include refid="criteria">
+			</include>
+			order by bno desc limit #{startNum},#{amount}
+		
 	</select>
 	
 	
@@ -49,8 +81,8 @@
 	 	where bno=#{bno}
 	</update>
 	
-	
-		
-		
+	<select id="getTotalCount" resultType="int" parameterType="Criteria">
+		select count(*) from tbl_board where bno>0
+	</select>	
 	
 </mapper>

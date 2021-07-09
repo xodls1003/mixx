@@ -11,7 +11,7 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	
 	<typeAliases>
 		<typeAlias alias="Board" type="com.mixtest.domain.BoardVO" />
-		
+		<typeAlias alias="Criteria" type="com.mixtest.domain.Criteria"/>
 	</typeAliases>
 	
 	<mappers>
