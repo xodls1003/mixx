@@ -77,7 +77,8 @@
 		update tbl_board
 		set title = #{title},
 		content = #{content},
-		writer=#{writer}
+		writer=#{writer},
+		updateDate = current_timestamp
 	 	where bno=#{bno}
 	</update>
 	

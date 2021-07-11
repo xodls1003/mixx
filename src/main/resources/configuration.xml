@@ -12,10 +12,12 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	<typeAliases>
 		<typeAlias alias="Board" type="com.mixtest.domain.BoardVO" />
 		<typeAlias alias="Criteria" type="com.mixtest.domain.Criteria"/>
+		<typeAlias alias="Reply" type="com.mixtest.domain.ReplyVO" />
 	</typeAliases>
 	
 	<mappers>
 		<mapper resource="mappers/BoardMapper.xml"/>
+		<mapper resource="mappers/ReplyMapper.xml"/>
 	</mappers>
 	
 </configuration>
