@@ -305,14 +305,14 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     modalRemoveBtn.on("click", function (e) {
       var rno = modal.data("rno");
       
-      replyService.remove(rno, function (deleteResult) {
-        alert(deleteResult);
+      replyService.remove(rno, function (result) {
+        alert(result);
         modal.modal("hide");
         showList(pageNum);
       });
-      alert("삭제되었습니다");
+     /*  alert("삭제되었습니다");
       modal.modal("hide");
-      showList(pageNum);
+      showList(pageNum); */
     });
 
     var pageNum = 1;
