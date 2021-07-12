@@ -1,13 +1,13 @@
 package com.mixtest.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mixtest.domain.Criteria;
 import com.mixtest.domain.ReplyPageDTO;
 import com.mixtest.domain.ReplyVO;
+import com.mixtest.mapper.BoardMapper;
 import com.mixtest.mapper.ReplyMapper;
 import com.mixtest.service.ReplyService;
 
@@ -20,13 +20,17 @@ public class ReplyServiceImpl implements ReplyService{
 	//의존적인 관계이기 때문에 AllArgsConstructor를 이용하여 처리하는것이 더 편리하다
 	
 	@Setter(onMethod_ = @Autowired)
+	private BoardMapper boardMapper;
+	
+	@Setter(onMethod_ = @Autowired)
 	private ReplyMapper mapper;
 	
+	@Transactional
 	@Override
 	public int register(ReplyVO vo) {
 			
 		log.info("register...." + vo);
-		
+		boardMapper.updateReplyCnt(vo.getBno(), 1);
 		return mapper.insert(vo);
 	}
 
@@ -46,11 +50,14 @@ public class ReplyServiceImpl implements ReplyService{
 				
 		return mapper.update(vo);
 	}
-
+	
+	@Transactional
 	@Override
 	public int remove(Long rno) {
 		log.info("remove...." + rno);
+		ReplyVO vo = mapper.read(rno);
 		
+		boardMapper.updateReplyCnt(vo.getBno(), -1);
 		return mapper.delete(rno);
 	}
 

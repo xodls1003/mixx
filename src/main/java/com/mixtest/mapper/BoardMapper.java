@@ -2,6 +2,8 @@ package com.mixtest.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.mixtest.domain.BoardVO;
 import com.mixtest.domain.Criteria;
 
@@ -25,6 +27,9 @@ public interface BoardMapper {
 	public int update(BoardVO board);
 	
 	public int getTotalCount(Criteria cri);
+	
+	public void updateReplyCnt(@Param("bno") Long bno, @Param("amount") int amount);
+	
 	
 	
 }

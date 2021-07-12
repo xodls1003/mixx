@@ -15,3 +15,5 @@ create table tbl_reply(
     replyDate datetime default current_timestamp,
     updateDate datetime default current_timestamp
     );
+    
+ alter table tbl_board add(replycnt int default 0);

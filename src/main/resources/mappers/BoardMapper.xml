@@ -84,6 +84,9 @@
 	
 	<select id="getTotalCount" resultType="int" parameterType="Criteria">
 		select count(*) from tbl_board where bno>0
-	</select>	
+	</select>
+	<update id="updateReplyCnt">
+		update tbl_board set replycnt = replycnt + #{amount} where bno=#{bno}
+	</update>	
 	
 </mapper>

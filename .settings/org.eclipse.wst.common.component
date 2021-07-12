@@ -3,7 +3,7 @@
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
 		<wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <dependent-module archiveName="mysql-connector-java-8.0.25.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/sts-bundle/sts-3.9.14.RELEASE/mysql-connector-java-8.0.25.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
