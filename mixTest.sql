@@ -17,3 +17,9 @@ create table tbl_reply(
     );
     
  alter table tbl_board add(replycnt int default 0);
+    create table tbl_attach(
+		uuid varchar(100) not null primary key,
+        uploadPath varchar(200) not null,
+        fileType char(1) default 'I',
+        bno int references tbl_board(bno)
+    );

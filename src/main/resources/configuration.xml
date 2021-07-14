@@ -13,11 +13,13 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 		<typeAlias alias="Board" type="com.mixtest.domain.BoardVO" />
 		<typeAlias alias="Criteria" type="com.mixtest.domain.Criteria"/>
 		<typeAlias alias="Reply" type="com.mixtest.domain.ReplyVO" />
+		<typeAlias alias="Attach" type="com.mixtest.domain.BoardAttachVO"/>
 	</typeAliases>
 	
 	<mappers>
 		<mapper resource="mappers/BoardMapper.xml"/>
 		<mapper resource="mappers/ReplyMapper.xml"/>
+		<mapper resource="mappers/BoardAttachMapper.xml"/>
 	</mappers>
 	
 </configuration>
