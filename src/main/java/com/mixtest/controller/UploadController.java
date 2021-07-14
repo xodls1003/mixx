@@ -69,9 +69,7 @@ public class UploadController {
 		//make folder
 		File uploadPath = new File(uploadFolder,getFolder());
 		
-		
 		if(uploadPath.exists() == false) {
-			log.info(uploadPath);
 			uploadPath.mkdirs();
 			
 		}
@@ -84,6 +82,7 @@ public class UploadController {
 			
 			//ie has file path
 			uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\")+1);
+			log.info(uploadFileName);
 			attachDTO.setFileName(uploadFileName);
 			UUID uuid = UUID.randomUUID();
 			
@@ -93,9 +92,9 @@ public class UploadController {
 			try {
 				File saveFile = new File(uploadPath, uploadFileName);
 				multipartFile.transferTo(saveFile);
-				
 				attachDTO.setUuid(uuid.toString());
-				attachDTO.setUploadPath(uploadFolderPath);
+				attachDTO.setUploadPath(uploadFolderPath.toString());
+				
 				
 				//check image type file
 				if(checkImageType(saveFile)) {
@@ -118,7 +117,7 @@ public class UploadController {
 	@GetMapping("/display")
 	@ResponseBody
 	public ResponseEntity<byte[]> getFile(String fileName){
-		File file = new File("C:\\upload\\" + fileName);
+		File file = new File("c:\\upload\\" + fileName);
 		
 		ResponseEntity<byte[]> result = null;
 		

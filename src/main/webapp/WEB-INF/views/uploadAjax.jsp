@@ -76,6 +76,7 @@ pageEncoding="UTF-8"%>
 
           function showUploadedFile(uploadResultArr) {
             var str = "";
+
             $(uploadResultArr).each(function (i, obj) {
               if (!obj.image) {
                 str +=
@@ -83,11 +84,19 @@ pageEncoding="UTF-8"%>
                   obj.fileName +
                   "</li>";
               } else {
+                
                 var fileCallPath = encodeURIComponent(
-                  obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName
+                  obj.uploadPath + "/s_" + obj.uuid + "-" + obj.fileName
                 );
+                console.log(obj.uploadPath);
+                console.log(obj.uuid);
+                console.log(obj.fileName);
+                console.log(fileCallPath);
                 str +=
-                  "<li><img src='/display?fileName=" + fileCallPath + "'></li>";
+                  "<li><img src='/display?fileName=/" +
+                  fileCallPath +
+                  "'></li>";
+                  console.log(str);
               }
             });
             uploadResult.append(str);
