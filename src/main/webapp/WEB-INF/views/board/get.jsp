@@ -312,16 +312,11 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     showList(1);
     //댓글리스트 보여주기 기능
     function showList(page) {
-      console.log("show list" + page);
+      
       replyService.getList(
         { bno: bnoValue, page: page || 1 },
         function (replyCnt, list) {
-          if (page == -1) {
-            pageNum = Math.ceil(replyCnt / 10.0);
-            showList(pageNum);
-            return;
-          }
-
+          
           var str = "";
           if (list == null || list.length == 0) {
             return;
@@ -374,7 +369,7 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
         modal.find("input").val("");
         modal.modal("hide");
-
+		
         showList(1);
       });
     });
