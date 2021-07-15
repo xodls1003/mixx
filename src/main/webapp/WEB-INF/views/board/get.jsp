@@ -3,6 +3,51 @@ pageEncoding="UTF-8" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/core"
 prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@include file="../includes/header.jsp" %>
 
+<style>
+  .uploadResult {
+    width: 100%;
+  }
+  .uploadResult ul {
+    display: flex;
+    flex-flow: row;
+    justify-content: center;
+    align-items: center;
+  }
+  .uploadResult ul li {
+    list-style: none;
+    padding: 10px;
+    align-content: center;
+    text-align: center;
+  }
+  .uploadResult ul li img {
+    width: 100px;
+  }
+  .uploadResult ul li span {
+    color: white;
+  }
+  .bigPictureWrapper {
+    position: absolute;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.5);
+  }
+  .bigPicture {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .bigPicture img {
+    width: 600px;
+  }
+</style>
+
 <div class="row">
   <div class="col-lg-12">
     <h1 class="page-header">Board Read</h1>
@@ -98,6 +143,14 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         </form>
       </div>
       <!-- /.panel-body -->
+
+      <div class="panel-heading">Files</div>
+      <!-- panel-heading -->
+      <div class="panel-body">
+        <div class="uploadResult">
+          <ul></ul>
+        </div>
+      </div>
     </div>
     <!-- /.panel -->
   </div>
@@ -200,6 +253,57 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!-- /.modal -->
 
 <script type="text/javascript" src="/resources/js/reply.js"></script>
+<script>
+  $(document).ready(function () {
+    (function () {
+      var bno = '<c:out value="${board.bno}"/>';
+
+      $.getJSON("/board/getAttachList", { bno: bno }, function (arr) {
+        console.log(arr);
+
+        var str = "";
+        $(arr).each(function (i, attach) {
+          //image type
+          if (attach.fileType) {
+            var fileCallPath = encodeURIComponent(
+              attach.uploadPath + "/s_" + attach.uuid + "_" + attach.fileName
+            );
+            str +=
+              "<li data-path='" +
+              attach.uploadPath +
+              "' data-uuid='" +
+              attach.uuid +
+              "' data-filename='" +
+              attach.fileName +
+              "' data-type='" +
+              attach.fileType +
+              "'><div>";
+            str += "<img src='/display?fileName=" + fileCallPath + "'>";
+            str += "</div>";
+            str + "</li>";
+          } else {
+            str +=
+              "<li data-path='" +
+              attach.uploadPath +
+              "' data-uuid='" +
+              attach.uuid +
+              "' data-filename='" +
+              attach.fileName +
+              "' data-type='" +
+              attach.fileType +
+              "'><div>";
+            str += "<span> " + attach.fileName + "</span><br/>";
+            str += "<img src='/resource/img/attach.png'>";
+            str += "</div>";
+            str + "</li>";
+          }
+        });
+
+        $(".uploadResult ul").html(str);
+      }); //end getJSON
+    })();
+  });
+</script>
 
 <script>
   $(document).ready(function () {
@@ -208,8 +312,8 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     showList(1);
     //댓글리스트 보여주기 기능
     function showList(page) {
-      	console.log("show list" + page);
-    	replyService.getList(
+      console.log("show list" + page);
+      replyService.getList(
         { bno: bnoValue, page: page || 1 },
         function (replyCnt, list) {
           if (page == -1) {
@@ -271,7 +375,7 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         modal.find("input").val("");
         modal.modal("hide");
 
-        showList(-1);
+        showList(1);
       });
     });
     //댓글 조회버튼 누를시 조회후 수정,삭제버튼 보임
@@ -304,13 +408,13 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     //댓글 삭제버튼 누를시 삭제
     modalRemoveBtn.on("click", function (e) {
       var rno = modal.data("rno");
-      
+
       replyService.remove(rno, function (result) {
         alert(result);
         modal.modal("hide");
         showList(pageNum);
       });
-     /*  alert("삭제되었습니다");
+      /*  alert("삭제되었습니다");
       modal.modal("hide");
       showList(pageNum); */
     });
@@ -356,7 +460,7 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
           "'>Next</a></li>";
       }
       str += "</ul></div>";
-      
+
       replyPageFooter.html(str);
     }
     //댓글 페이지 번호 누를시 이동

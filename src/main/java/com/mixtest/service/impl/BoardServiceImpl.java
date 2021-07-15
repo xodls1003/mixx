@@ -2,20 +2,29 @@ package com.mixtest.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.mixtest.domain.BoardAttachVO;
 import com.mixtest.domain.BoardVO;
 import com.mixtest.domain.Criteria;
+import com.mixtest.mapper.BoardAttachMapper;
 import com.mixtest.mapper.BoardMapper;
 import com.mixtest.service.BoardService;
 
-import lombok.AllArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 
 @Service
 @Log4j
-@AllArgsConstructor
 public class BoardServiceImpl implements BoardService{
+	
+	@Setter(onMethod_ = @Autowired)
+	private BoardMapper mapper;
+	
+	@Setter(onMethod_ = @Autowired)
+	private BoardAttachMapper attachMapper;
 	
 	@Override
 	public List<BoardVO> getList(Criteria cri) {
@@ -24,13 +33,27 @@ public class BoardServiceImpl implements BoardService{
 		
 		return mapper.getListWithPaging(cri);
 	}
+	public long selectNextBno() {
+		return mapper.selectNextBno();
+	}
 
-	private BoardMapper mapper;
 	
+	@Transactional
 	@Override
 	public void register(BoardVO board) {
 		log.info("register....." + board);
 		mapper.insertSelectKey(board);
+		
+		if(board.getAttachList()==null || board.getAttachList().size() <= 0) {
+			return;
+		}
+		board.getAttachList().forEach(attach ->{
+			attach.setBno(mapper.selectNextBno());
+			log.info("===================");
+			log.info(mapper.selectNextBno());
+			log.info(attach);
+			attachMapper.insert(attach);
+		});
 		
 	}
 
@@ -40,6 +63,7 @@ public class BoardServiceImpl implements BoardService{
 		log.info("get.........." + bno);
 		return mapper.read(bno);
 	}
+	
 
 	@Override
 	public boolean modify(BoardVO board) {
@@ -62,5 +86,10 @@ public class BoardServiceImpl implements BoardService{
 		log.info("get total count");
 		return mapper.getTotalCount(cri);
 		
+	}
+	@Override
+	public List<BoardAttachVO> getAttachList(Long bno) {
+		log.info("get Attach list by bno"+bno);;
+		return attachMapper.findByBno(bno);
 	}
 }

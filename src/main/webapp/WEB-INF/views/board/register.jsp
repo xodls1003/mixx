@@ -57,6 +57,38 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       e.preventDefault();
 
       console.log("submit clicked");
+      var str = "";
+      $(".uploadResult ul li").each(function (i, obj) {
+        var jobj = $(obj);
+        console.dir(jobj);
+
+        str +=
+          "<input type='hidden' name='attachList[" +
+          i +
+          "].fileName' value='" +
+          jobj.data("filename") +
+          "'>";
+        str +=
+          "<input type='hidden' name='attachList[" +
+          i +
+          "].uuid' value='" +
+          jobj.data("uuid") +
+          "'>";
+        str +=
+          "<input type='hidden' name='attachList[" +
+          i +
+          "].uploadPath' value='" +
+          jobj.data("path") +
+          "'>";
+        str +=
+          "<input type='hidden' name='attachList[" +
+          i +
+          "].fileType' value='" +
+          jobj.data("type") +
+          "'>";
+      });
+      
+      formObj.append(str).submit();
     });
     var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
     var maxSize = 5242880;
@@ -71,14 +103,95 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         return false;
       }
       return true;
+    } //end function checkExtensiont
+
+    function showUploadResult(uploadResultArr) {
+      if (!uploadResultArr || uploadResultArr.length == 0) {
+        return;
+      }
+      var uploadUL = $(".uploadResult ul");
+
+      var str = "";
+
+      $(uploadResultArr).each(function (i, obj) {
+        //image type
+        if (obj.image) {
+          var fileCallPath = encodeURIComponent(
+            obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName
+          );
+          str += "<li data-path='" + obj.uploadPath + "'";
+          str +=
+            "data-uuid='" +
+            obj.uuid +
+            "' data-filename='" +
+            obj.fileName +
+            "' data-type='" +
+            obj.image +
+            "'";
+          str += "><div>";
+          str += "<span> " + obj.fileName + "</span>";
+          str += "<button type='button' data-file='" + fileCallPath + "'";
+          str +=
+            "data-type='image' class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
+          str += "<img src='/display?fileName=" + fileCallPath + "'>";
+          str += "</div>";
+          str + "</li>";
+        } else {
+          var fileCallPath = encodeURIComponent(
+            obj.uploadPath + "/" + obj.uuid + "_" + obj.fileName
+          );
+          var fileLink = fileCallPath.replace(new RegExp(/\\/g), "/");
+
+          str += "<li ";
+          str +=
+            "data-path='" +
+            obj.uploadPath +
+            "' data-uuid='" +
+            obj.uuid +
+            "'data-fileName='" +
+            obj.fileName +
+            "' data-type='" +
+            obj.image +
+            "' ><div><a>";
+          str += "<span> " + obj.fileName + "</span>";
+          str +=
+            "<button type='button' data-file='" +
+            fileCallPath +
+            "' data-type='file'";
+          str +=
+            "class='btn btn-warning btn-circle'><i class='fa fa-times'></i></button><br>";
+          str += "<img src='/resources/img/attach.png'></a>";
+          str += "</div>";
+          str + "</li>";
+        }
+      });
+      uploadUL.append(str);
     }
+    //end function showUploadResult
+    $(".uploadResult").on("click", "button", function (e) {
+      console.log("delete file");
+      var targetFile = $(this).data("file");
+      var type = $(this).data("type");
+
+      var targetLi = $(this).closest("li");
+      $.ajax({
+        url: "/deleteFile",
+        data: { fileName: targetFile, type: type },
+        dataType: "text",
+        type: "POST",
+        success: function (result) {
+          alert(result);
+          targetLi.remove();
+        },
+      }); //end $.ajax
+    });
     $("input[type='file']").change(function (e) {
       var formData = new FormData();
       var inputFile = $("input[name='uploadFile']");
 
       var files = inputFile[0].files;
       for (var i = 0; i < files.length; i++) {
-        if (!checkExtension(file[i].name, files[i].size)) {
+        if (!checkExtension(files[i].name, files[i].size)) {
           return false;
         }
         formData.append("uploadFile", files[i]);
@@ -88,9 +201,11 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         processData: false,
         contentType: false,
         data: formData,
+        type: "POST",
         dataType: "json",
         success: function (result) {
           console.log(result);
+          showUploadResult(result);
         },
       });
     });

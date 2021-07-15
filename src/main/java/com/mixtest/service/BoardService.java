@@ -2,6 +2,7 @@ package com.mixtest.service;
 
 import java.util.List;
 
+import com.mixtest.domain.BoardAttachVO;
 import com.mixtest.domain.BoardVO;
 import com.mixtest.domain.Criteria;
 
@@ -19,4 +20,6 @@ public interface BoardService {
 	public List<BoardVO> getList(Criteria cri);
 	
 	public int getTotal(Criteria cri);
+	
+	public List<BoardAttachVO> getAttachList(Long bno);
 }

@@ -48,6 +48,9 @@
 		
 	</select>
 	
+	<select id="selectNextBno" resultType="long">
+			select last_insert_id() from dual;
+	</select>
 	
 	<insert id="insertSelectKey">
 		
