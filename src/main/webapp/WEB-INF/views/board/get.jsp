@@ -2,7 +2,9 @@
 pageEncoding="UTF-8" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/core"
 prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@include file="../includes/header.jsp" %>
-
+<div class="bigPictureWrapper">
+  <div class="bigPicture"></div>
+</div>
 <style>
   .uploadResult {
     width: 100%;
@@ -186,7 +188,7 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
   class="modal fade"
   id="myModal"
   tabindex="-1"
-  role="dialog"
+  00
   aria-labelledby="myModalLabel"
   aria-hidden="true"
 >
@@ -293,7 +295,7 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
               attach.fileType +
               "'><div>";
             str += "<span> " + attach.fileName + "</span><br/>";
-            str += "<img src='/resource/img/attach.png'>";
+            str += "<img src='/resources/img/attach.png'>";
             str += "</div>";
             str + "</li>";
           }
@@ -302,6 +304,37 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         $(".uploadResult ul").html(str);
       }); //end getJSON
     })();
+    //첨부파일 클릭 시 이벤트
+    $(".uploadResult").on("click", "li", function (e) {
+      var liObj = $(this);
+      var path = encodeURIComponent(
+        liObj.data("path") +
+          "/" +
+          liObj.data("uuid") +
+          "_" +
+          liObj.data("filename")
+      );
+
+      if (liObj.data("type")) {
+        showImage(path.replace(new RegExp(/\\/g), "/"));
+      } else {
+        //download file
+        self.location = "/download?fileName=" + path;
+      }
+    });
+    function showImage(fileCallPath) {
+      alert(fileCallPath);
+      $(".bigPictureWrapper").css("display", "flex").show();
+      $(".bigPicture")
+        .html("<img src='/display?fileName=" + fileCallPath + "'>")
+        .animate({ width: "100%", height: "100%" }, 1000);
+    }
+    $(".bigPictureWrapper").on("click", function (e) {
+      $(".bigPicture").animate({ width: "0%", height: "0%" }, 1000);
+      setTimeout(function () {
+        $(".bigPictureWrapper").hide();
+      }, 1000);
+    });
   });
 </script>
 
@@ -312,11 +345,9 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     showList(1);
     //댓글리스트 보여주기 기능
     function showList(page) {
-      
       replyService.getList(
         { bno: bnoValue, page: page || 1 },
         function (replyCnt, list) {
-          
           var str = "";
           if (list == null || list.length == 0) {
             return;
@@ -335,7 +366,6 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
           }
           replyUL.html(str);
           showReplyPage(replyCnt);
-          0;
         }
       ); // end function
     } // end showList
@@ -366,14 +396,13 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       };
       replyService.add(reply, function (result) {
         alert(result);
-
         modal.find("input").val("");
         modal.modal("hide");
-		
-        showList(1);
+
+        showList(-1);
       });
     });
-    //댓글 조회버튼 누를시 조회후 수정,삭제버튼 보임
+    //댓글 조회버튼 누를시 조회후 수정,삭제버튼,이미지 보임
     $(".chat").on("click", "li", function (e) {
       var rno = $(this).data("rno");
       replyService.get(rno, function (reply) {

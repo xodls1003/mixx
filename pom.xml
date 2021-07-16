@@ -47,9 +47,9 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
-		    <version>8.0.25</version>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.25</version>
 		</dependency>
 
 		<dependency>
@@ -63,7 +63,7 @@
 			<groupId>net.coobird</groupId>
 			<artifactId>thumbnailator</artifactId>
 			<version>0.4.8</version>
-		</dependency>		
+		</dependency>
 
 
 		<!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
@@ -217,6 +217,22 @@
 			<version>2.9.5</version>
 		</dependency>
 
+		<!-- Quartz 라이브러리(스케쥴러를 구성하기 위해 사용) -->
+		<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz-jobs -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-jobs</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+
+
+
 
 
 
@@ -231,11 +247,11 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
 		<dependency>
-    		<groupId>org.aspectj</groupId>
-    		<artifactId>aspectjweaver</artifactId>
-    		<version>${org.aspectj-version}</version>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${org.aspectj-version}</version>
 		</dependency>
-		
+
 
 		<!-- Logging -->
 		<dependency>

@@ -14,4 +14,11 @@
 	<select id="findByBno" resultType="Attach">
 		select * from tbl_attach where bno=#{bno}
 	</select>
+	<delete id="deleteAll" >
+		delete from tbl_attach where bno = #{bno}
+	</delete>
+	
+	<select id="getOldFiles" resultType="com.mixtest.domain.BoardAttachVO">
+		select * from tbl_attach where uploadpath = date_format(CURDATE() -INTERVAL 1 DAY,'%Y\%m\%d');
+	</select>
 </mapper>

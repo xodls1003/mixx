@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<bean id="customAccessDenied" class="com.mixtest.security.CustomAccessDeniedHandler"></bean>
+<bean id="customLoginSuccess" class="com.mixtest.security.CustomLoginSuccessHandler"></bean>
+<!-- <bean id="customPasswordEncoder" class="com.mixtest.security.CustomNoOpPasswordEncoder"></bean> -->
+<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+<security:http auto-config="true" use-expressions="true">
+	<security:intercept-url pattern="/sample/all" access="permitAll"/>
+	<security:intercept-url pattern="/sample/member" access="hasRole('ROLE_MEMBER')"/>
+	<security:intercept-url pattern="/sample/admin" access="hasRole('ROLE_ADMIN')"/>
+	<security:access-denied-handler ref="customAccessDenied"/>
+	<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
+	<security:logout logout-url="/customLogout" invalidate-session="true"/>
+	<!-- <security:csrf disabled="true"/> -->
+</security:http>
+
+<security:authentication-manager>
+	<security:authentication-provider>
+		<security:jdbc-user-service data-source-ref="dataSource"/>
+		<security:password-encoder ref="bcryptPasswordEncoder" />
+	</security:authentication-provider>
+</security:authentication-manager>
+
+
+
+</beans>

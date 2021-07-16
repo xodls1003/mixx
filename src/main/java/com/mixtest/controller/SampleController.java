@@ -130,9 +130,23 @@ public class SampleController {
 	@PostMapping("/exUploadPost")
 	public void exUploadPost(ArrayList<MultipartFile> files) {
 		files.forEach(file-> {
-			log.info("-------------------");
+			log.info("-------------------"); 
 			log.info("name: " + file.getOriginalFilename());
 			log.info("size: "  + file.getSize());
 		});
 	}
+	@GetMapping("/all")
+	public void doAll() {
+		log.info("do all can access everybody");
+	}
+	@GetMapping("/member")
+	public void doMember() {
+		log.info("logined member");
+	}
+	@GetMapping("/admin")
+	public void doAdmin() {
+		log.info("admin only");
+	}
+	
+	
 }

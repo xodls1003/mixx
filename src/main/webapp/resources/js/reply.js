@@ -23,10 +23,9 @@ var replyService = (function () {
   function getList(param, callback, error) {
     var bno = param.bno;
     var page = param.page || 1;
-    console.log(bno);
+
     $.getJSON("/replies/pages/" + bno + "/" + page + ".json", function (data) {
       if (callback) {
-        
         callback(data.replyCnt, data.list);
       }
     }).fail(function (xhr, status, err) {
@@ -39,18 +38,15 @@ var replyService = (function () {
   function remove(rno, callback, error) {
     $.ajax({
       type: "delete",
-      url: "/replies/"+rno,
+      url: "/replies/" + rno,
       success: function (deleteResult, status, xhr) {
-        
-          
-          callback(deleteResult);
-        
+        callback(deleteResult);
       },
       error: function (xhr, status, er) {
         if (error) {
           error(er);
         }
-      }
+      },
     });
   }
 
@@ -71,7 +67,7 @@ var replyService = (function () {
         if (error) {
           error(er);
         }
-      }
+      },
     });
   }
   function get(rno, callback, error) {
@@ -125,6 +121,6 @@ var replyService = (function () {
     remove: remove,
     update: update,
     get: get,
-    displayTime: displayTime
+    displayTime: displayTime,
   };
 })();
