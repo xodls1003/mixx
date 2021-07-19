@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/core"
 prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@include file="../includes/header.jsp" %>
 <div class="bigPictureWrapper">
   <div class="bigPicture"></div>
@@ -97,11 +98,16 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
           <input
             name="writer"
             class="form-control"
-            value='<c:out value="${board.content}" />'
+            value='<c:out value="${board.writer}" />'
             readonly="readonly"
           />
         </div>
-        <button data-oper="modify" class="btn btn-default">Modify</button>
+        <sec:authentication property="principal" var="pinfo" />
+        <sec:authorize access="isAuthenticated()">
+          <c:if test="${pinfo.username eq board.writer}">
+            <button data-oper="modify" class="btn btn-default">Modify</button>
+          </c:if>
+        </sec:authorize>
         <button
           data-oper="list"
           class="btn btn-info"
@@ -165,9 +171,11 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     <div class="panel panel-default">
       <div class="panel-heading">
         <i class="fa fa-commnets fa-fw"></i>Reply
-        <button id="addReplyBtn" class="btn btn-primary btn-xs pull-right">
-          New Reply
-        </button>
+        <sec:authorize access="isAuthenticated()">
+          <button id="addReplyBtn" class="btn btn-primary btn-xs pull-right">
+            New Reply
+          </button>
+        </sec:authorize>
       </div>
       <div class="panel-body">
         <ul class="chat"></ul>
@@ -188,7 +196,6 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
   class="modal fade"
   id="myModal"
   tabindex="-1"
-  00
   aria-labelledby="myModalLabel"
   aria-hidden="true"
 >
@@ -378,15 +385,26 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     var modalModBtn = $("#modalModBtn");
     var modalRemoveBtn = $("#modalRemoveBtn");
     var modalRegisterBtn = $("#modalRegisterBtn");
+    var replyer = null;
+    <sec:authorize access="isAuthenticated()">
+      replyer="<sec:authentication property="principal.username" />";
+    </sec:authorize>;
+    var csrfHeaderName = "${_csrf.headerName}";
+    var csrfTokenValue = "${_csrf.token}";
     //댓글 누를시 등록
     $("#addReplyBtn").on("click", function (e) {
       modal.find("input").val("");
+      modal.find("input[name='replyer']").val(replyer);
       modalInputReplyDate.closest("div").hide();
       modal.find("button[id !='modalCloseBtn']").hide();
       modalRegisterBtn.show();
 
       $(".modal").modal("show");
     });
+    $(document).ajaxSend(function (e, xhr, options) {
+      xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+    });
+
     //댓글 등록버튼
     modalRegisterBtn.on("click", function (e) {
       var reply = {
@@ -399,7 +417,7 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         modal.find("input").val("");
         modal.modal("hide");
 
-        showList(-1);
+        showList(1);
       });
     });
     //댓글 조회버튼 누를시 조회후 수정,삭제버튼,이미지 보임
@@ -421,8 +439,23 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     });
     //댓글 수정버튼 누를시 수정
     modalModBtn.on("click", function (e) {
-      var reply = { rno: modal.data("rno"), reply: modalInputReply.val() };
+      var originalReplyer = modalInputReplyer.val();
 
+      var reply = {
+        rno: modal.data("rno"),
+        reply: modalInputReply.val(),
+        replyer: originalReplyer,
+      };
+      if (!replyer) {
+        alert("로그인후 수정이 가능합니다.");
+        modal.modal("hide");
+        return;
+      }
+      if (replyer != originalReplyer) {
+        alert("자신이 작성한 댓글만 수정이 가능합니다.");
+        modal.modal("hide");
+        return;
+      }
       replyService.update(reply, function (result) {
         alert(result);
         modal.modal("hide");
@@ -433,7 +466,19 @@ prefix="c" %> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     modalRemoveBtn.on("click", function (e) {
       var rno = modal.data("rno");
 
-      replyService.remove(rno, function (result) {
+      if (!replyer) {
+        alert("로그인후 삭제가 가능합니다.");
+        modal.modal("hide");
+        return;
+      }
+      var originalReplyer = modalInputReplyer.val();
+      if (replyer != originalReplyer) {
+        alert("자신이 작성한 댓글만 삭제가 가능합니다.");
+        modal.modal("hide");
+        return;
+      }
+
+      replyService.remove(rno,originalReplyer,function (result) {
         alert(result);
         modal.modal("hide");
         showList(pageNum);

@@ -5,9 +5,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import com.mixtest.domain.CustomUser;
 import com.mixtest.domain.MemberVO;
 import com.mixtest.mapper.MemberMapper;
-import com.mixtest.security.domain.CustomUser;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;

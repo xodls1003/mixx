@@ -1,4 +1,4 @@
-package com.mixtest.security.domain;
+package com.mixtest.domain;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-
-import com.mixtest.domain.MemberVO;
 
 import lombok.Getter;
 

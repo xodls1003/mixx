@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/core"
 prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@include file="../includes/header.jsp" %>
 
 <div class="row">
@@ -17,6 +18,11 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       <!-- /.panel-heading -->
       <div class="panel-body">
         <form role="form" action="/board/register" method="POST">
+          <input
+            type="hidden"
+            name="${_csrf.parameterName}"
+            value="${_csrf.token}"
+          />
           <div class="form-group">
             <label>Title</label>
             <input name="title" class="form-control" />
@@ -27,7 +33,14 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
           </div>
           <div class="form-group">
             <label>Writer</label>
-            <input name="writer" class="form-control" />
+            <input
+              name="writer"
+              class="form-control"
+              value='<sec:authentication
+              property="principal.username"
+            />'
+              readonly="readonly"
+            />
           </div>
           <button type="submit" class="btn btn-default">Submit Button</button>
           <button type="reset" class="btn btn-default">Reset Button</button>
@@ -87,7 +100,7 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
           jobj.data("type") +
           "'>";
       });
-      
+
       formObj.append(str).submit();
     });
     var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
@@ -168,23 +181,9 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
       uploadUL.append(str);
     }
     //end function showUploadResult
-    $(".uploadResult").on("click", "button", function (e) {
-      console.log("delete file");
-      var targetFile = $(this).data("file");
-      var type = $(this).data("type");
 
-      var targetLi = $(this).closest("li");
-      $.ajax({
-        url: "/deleteFile",
-        data: { fileName: targetFile, type: type },
-        dataType: "text",
-        type: "POST",
-        success: function (result) {
-          alert(result);
-          targetLi.remove();
-        },
-      }); //end $.ajax
-    });
+    var csrfHeaderName = "${_csrf.headerName}";
+    var csrfTokenValue = "${_csrf.token}";
     $("input[type='file']").change(function (e) {
       var formData = new FormData();
       var inputFile = $("input[name='uploadFile']");
@@ -200,6 +199,9 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
         url: "/uploadAjaxAction",
         processData: false,
         contentType: false,
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+        },
         data: formData,
         type: "POST",
         dataType: "json",
@@ -208,6 +210,26 @@ prefix="c"%> <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
           showUploadResult(result);
         },
       });
+    });
+    $(".uploadResult").on("click", "button", function (e) {
+      console.log("delete file");
+      var targetFile = $(this).data("file");
+      var type = $(this).data("type");
+
+      var targetLi = $(this).closest("li");
+      $.ajax({
+        url: "/deleteFile",
+        data: { fileName: targetFile, type: type },
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+        },
+        dataType: "text",
+        type: "POST",
+        success: function (result) {
+          alert(result);
+          targetLi.remove();
+        },
+      }); //end $.ajax
     });
   });
 </script>

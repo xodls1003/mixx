@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,6 +53,7 @@ public class BoardController {
 		
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@PostMapping("/register")
 	public String register(BoardVO board, RedirectAttributes rttr) {
 		
@@ -72,6 +74,7 @@ public class BoardController {
 	}
 	
 	@GetMapping("/register")
+	@PreAuthorize("isAuthenticated()")
 	public void register() {
 		
 	}
@@ -82,6 +85,7 @@ public class BoardController {
 			model.addAttribute("board", service.get(bno));
 	}
 	
+	@PreAuthorize("principal.username == #board.writer")
 	@PostMapping("/modify")
 	public String modify(BoardVO board,Criteria cri, RedirectAttributes rttr) {
 		log.info("modify:" + board);
@@ -93,9 +97,9 @@ public class BoardController {
 		
 		return "redirect:/board/list"+cri.getListLink();
 	}
-	
+	@PreAuthorize("principal.username == #writer")
 	@PostMapping("/remove")
-	public String remove(@RequestParam("bno")Long bno,@ModelAttribute("cri")Criteria cri, RedirectAttributes rttr) {
+	public String remove(@RequestParam("bno")Long bno,@ModelAttribute("cri")Criteria cri, RedirectAttributes rttr, String writer) {
 		
 		log.info("remove..." + bno);
 		List<BoardAttachVO> attachList = service.getAttachList(bno);

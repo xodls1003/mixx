@@ -8,6 +8,8 @@ import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -139,13 +141,25 @@ public class SampleController {
 	public void doAll() {
 		log.info("do all can access everybody");
 	}
-	@GetMapping("/member")
-	public void doMember() {
-		log.info("logined member");
-	}
+
+	/*
+	 * @GetMapping("/member") public void doMember() { log.info("logined member"); }
+	 */
 	@GetMapping("/admin")
 	public void doAdmin() {
 		log.info("admin only");
+	}
+	
+	@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MEMBER')")
+	@GetMapping("/annoMember")
+	public void doMember() {
+		log.info("logined annotation member");
+		
+	}
+	@Secured({"ROLE_ADMIN"})
+	@GetMapping("/annoAdmin")
+	public void doAdmin2() {
+		log.info("admin annotation only");
 	}
 	
 	

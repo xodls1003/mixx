@@ -2,6 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://www.springframework.org/security/tags"
+	prefix="sec"%>
 <%@include file="../includes/header.jsp"%>
 <div class="bigPictureWrapper">
 	<div class="bigPicture"></div>
@@ -71,7 +73,8 @@
 			<!-- /.panel-heading -->
 			<div class="panel-body">
 				<form role="form" action="/board/modify" method="POST">
-					<input type="hidden" name="pageNum"
+					<input type="hidden" name="${_csrf.parameterName}"
+						value="${_csrf.token}" /> <input type="hidden" name="pageNum"
 						value='<c:out value="${cri.pageNum}"/>' /> <input type="hidden"
 						name="amount" value='<c:out value="${cri.amount}"/>' /> <input
 						type="hidden" name="startNum"
@@ -93,7 +96,7 @@
 					</div>
 					<div class="form-group">
 						<label>Writer</label> <input name='writer' class="form-control"
-							value='<c:out value="${board.content}" />' readonly="readonly">
+							value='<c:out value="${board.writer}" />' readonly="readonly">
 					</div>
 					<div class="form-group">
 						<label>RegDate</label> <input name='regDate' class="form-control"
@@ -107,11 +110,15 @@
 							readonly="readonly">
 					</div>
 
-
-					<button data-oper='modify' class="btn btn-default"
-						onclick="location.href='/board/modify?bno=<c:out value=" ${board.bno}" />'">
-						Modify</button>
-					<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
+					<sec:authentication property="principal" var="pinfo" />
+					<sec:authorize access="isAuthenticated()">
+						<c:if test="${pinfo.username eq board.writer}">
+							<button data-oper='modify' class="btn btn-default"
+								onclick="location.href='/board/modify?bno=<c:out value="${board.bno}" />'">
+								Modify</button>
+							<button type="submit" data-oper="remove" class="btn btn-danger">Remove</button>
+						</c:if>
+					</sec:authorize>
 					<button data-oper='list' class="btn btn-info"
 						onclick="location.href='/board/list'">List</button>
 				</form>
@@ -234,6 +241,9 @@
 							uploadUL.append(str);
 						}
 						//end function showUploadResult
+						var csrfHeaderName = "${_csrf.headerName}";
+    					var csrfTokenValue = "${_csrf.token}";
+
 						$("input[type='file']")
 								.change(
 										function(e) {
@@ -256,6 +266,9 @@
 												contentType : false,
 												data : formData,
 												type : "POST",
+												beforeSend: function (xhr) {
+          										xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+												 },
 												dataType : "json",
 												success : function(result) {
 													console.log(result);
