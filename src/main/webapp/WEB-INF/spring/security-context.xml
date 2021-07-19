@@ -9,6 +9,7 @@
 <bean id="customLoginSuccess" class="com.mixtest.security.CustomLoginSuccessHandler"></bean>
 <!-- <bean id="customPasswordEncoder" class="com.mixtest.security.CustomNoOpPasswordEncoder"></bean> -->
 <bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+<bean id="customUserDetailsService" class="com.mixtest.security.CustomUserDetailsService"></bean>
 
 <security:http auto-config="true" use-expressions="true">
 	<security:intercept-url pattern="/sample/all" access="permitAll"/>
@@ -17,12 +18,13 @@
 	<security:access-denied-handler ref="customAccessDenied"/>
 	<security:form-login login-page="/customLogin" authentication-success-handler-ref="customLoginSuccess"/>
 	<security:logout logout-url="/customLogout" invalidate-session="true"/>
+	<security:remember-me data-source-ref="dataSource" token-validity-seconds="604800" />
 	<!-- <security:csrf disabled="true"/> -->
 </security:http>
 
 <security:authentication-manager>
-	<security:authentication-provider>
-		<security:jdbc-user-service data-source-ref="dataSource"/>
+	<security:authentication-provider
+		user-service-ref="customUserDetailsService">
 		<security:password-encoder ref="bcryptPasswordEncoder" />
 	</security:authentication-provider>
 </security:authentication-manager>

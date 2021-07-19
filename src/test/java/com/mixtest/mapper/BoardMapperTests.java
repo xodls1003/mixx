@@ -52,19 +52,19 @@ public class BoardMapperTests {
 		log.info(board);
 	}
 	
-	/*
-	 * @Test public void testInsert() { BoardVO board = new BoardVO();
-	 * board.setTitle("테스트 새로 작성글 제목"); board.setContent("테스트 새로 작성 글 내용");
-	 * board.setWriter("테스트 새로 작성자");
-	 * 
-	 * mapper.insert(board); log.info(board); }
-	 *                                          
-	 * @Test public void testInsertSelectKey() { BoardVO board = new BoardVO();
-	 * board.setTitle("select key로 새로 작성하는 글");
-	 * board.setContent("selectKey로 새로 작성하는 내용"); board.setWriter("selectkey 작성자");
-	 * 
-	 * mapper.insertSelectKey(board); log.info(board); }
-	 */
+	
+	  @Test public void testInsert() { BoardVO board = new BoardVO();
+	  board.setTitle("테스트 새로 작성글 제목"); board.setContent("테스트 새로 작성 글 내용");
+	  board.setWriter("테스트 새로 작성자");
+	  
+	 mapper.insert(board); log.info(board); }
+	                                           
+	 @Test public void testInsertSelectKey() { BoardVO board = new BoardVO();
+	  board.setTitle("select key로 새로 작성하는 글");
+	  board.setContent("selectKey로 새로 작성하는 내용"); board.setWriter("selectkey 작성자");
+	  
+	  mapper.insertSelectKey(board); log.info(board); }
+	 
 	@Test
 	public void testDelete() {
 		log.info("DELETE COUNT: " + mapper.delete(3L));
